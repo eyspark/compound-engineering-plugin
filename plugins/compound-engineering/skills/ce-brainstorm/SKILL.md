@@ -260,7 +260,7 @@ If `Resolve Before Planning` contains any items:
 **Question when blocking questions remain and user wants to pause:** "Brainstorm paused. Planning is blocked until the remaining questions are resolved. What would you like to do next?"
 
 Present only the options that apply:
-- **Proceed to planning (Recommended)** - Run `ce:plan` for structured implementation planning
+- **Proceed to planning (Recommended)** - Run `/ce:plan` for structured implementation planning
 - **Proceed directly to work** - Only offer this when scope is lightweight, success criteria are clear, scope boundaries are clear, and no meaningful technical or research questions remain
 - **Review and refine** - Offer this only when a requirements document exists and can be improved through structured review
 - **Ask more questions** - Continue clarifying scope, preferences, or edge cases
@@ -270,6 +270,14 @@ Present only the options that apply:
 If the direct-to-work gate is not satisfied, omit that option entirely.
 
 #### 4.2 Handle the Selected Option
+
+**If user selects "Proceed to planning (Recommended)":**
+
+Immediately run `/ce:plan` in the current session. Pass the requirements document path when one exists; otherwise pass a concise summary of the finalized brainstorm decisions. Do not print the closing summary first.
+
+**If user selects "Proceed directly to work":**
+
+Immediately run `/ce:work` in the current session using the finalized brainstorm output as context. If a compact requirements document exists, pass its path. Do not print the closing summary first.
 
 **If user selects "Share to Proof":**
 
@@ -309,7 +317,7 @@ Key decisions:
 - [Decision 1]
 - [Decision 2]
 
-Recommended next step: `ce:plan`
+Recommended next step: `/ce:plan`
 ```
 
 If the user pauses with `Resolve Before Planning` still populated, display:
@@ -323,5 +331,5 @@ Planning is blocked by:
 - [Blocking question 1]
 - [Blocking question 2]
 
-Resume with `ce:brainstorm` when ready to resolve these before planning.
+Resume with `/ce:brainstorm` when ready to resolve these before planning.
 ```
