@@ -7,8 +7,8 @@ AI-powered development tools that get smarter with every use. Make each unit of 
 | Component | Count |
 |-----------|-------|
 | Agents | 28 |
-| Commands | 22 |
-| Skills | 19 |
+| Commands | 23 |
+| Skills | 20 |
 | MCP Servers | 1 |
 
 ## Agents
@@ -81,6 +81,7 @@ Core workflow commands use `ce:` prefix to unambiguously identify them as compou
 | `/ce:review` | Run comprehensive code reviews |
 | `/ce:work` | Execute work items systematically |
 | `/ce:compound` | Document solved problems to compound team knowledge |
+| `/ce:compound-refresh` | Refresh stale or drifting learnings and decide whether to keep, update, replace, or archive them |
 
 > **Deprecated aliases:** `/workflows:plan`, `/workflows:work`, `/workflows:review`, `/workflows:brainstorm`, `/workflows:compound` still work but show a deprecation warning. Use `ce:*` equivalents.
 
@@ -124,7 +125,7 @@ Core workflow commands use `ce:` prefix to unambiguously identify them as compou
 | `dhh-rails-style` | Write Ruby/Rails code in DHH's 37signals style |
 | `dspy-ruby` | Build type-safe LLM applications with DSPy.rb |
 | `frontend-design` | Create production-grade frontend interfaces |
-| `skill-creator` | Guide for creating effective Claude Code skills |
+
 
 ### Content & Workflow
 
