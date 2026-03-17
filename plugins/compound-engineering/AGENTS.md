@@ -116,6 +116,32 @@ grep -E '`(references|assets|scripts)/[^`]+`' skills/*/SKILL.md
 grep -E '^description:' skills/*/SKILL.md
 ```
 
+## Beta Skills
+
+Beta skills are experimental versions of core workflow skills, published as separate skills with a `-beta` suffix (e.g., `ce-plan-beta`, `deepen-plan-beta`). They live alongside the stable versions and are invoked directly.
+
+See `docs/solutions/skill-design/beta-skills-framework.md` for the full pattern.
+
+### Beta Skill Rules
+
+- Beta skills use `-beta` suffix in directory name, skill name, and description prefix (`[BETA]`)
+- Beta skills must reference other beta skills by their beta names (e.g., `/deepen-plan-beta`, not `/deepen-plan`)
+- Beta plan output files use `-beta-plan.md` suffix to avoid clobbering stable plan files
+- Beta skills are not wired into `lfg`/`slfg` orchestration — invoke them directly
+
+### Promoting Beta to Stable
+
+When replacing a stable skill with its beta version:
+
+- [ ] Replace stable `SKILL.md` content with beta skill content
+- [ ] Restore stable frontmatter: remove `[BETA]` prefix from description, restore stable `name:` (e.g., `ce:plan` not `ce:plan-beta`)
+- [ ] Update all internal references back to stable names (`/deepen-plan` not `/deepen-plan-beta`)
+- [ ] Restore stable plan file naming (remove `-beta` from `-beta-plan.md` convention)
+- [ ] Delete the beta skill directory
+- [ ] Update README.md: remove from Beta Skills section, verify counts
+- [ ] Verify `lfg`/`slfg` still work with the updated stable skill
+- [ ] Verify `ce:work` consumes plans from the promoted skill correctly
+
 ## Documentation
 
 See `docs/solutions/plugin-versioning-requirements.md` for detailed versioning workflow.

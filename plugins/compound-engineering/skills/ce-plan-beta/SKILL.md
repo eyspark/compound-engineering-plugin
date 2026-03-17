@@ -224,11 +224,12 @@ Ask the user only when the answer materially affects architecture, scope, sequen
 
 - Draft a clear, searchable title using conventional format such as `feat: Add user authentication` or `fix: Prevent checkout double-submit`
 - Determine the plan type: `feat`, `fix`, or `refactor`
-- Build the filename following the repository convention: `docs/plans/YYYY-MM-DD-NNN-<type>-<descriptive-name>-plan.md`
+- Build the filename following the repository convention: `docs/plans/YYYY-MM-DD-NNN-<type>-<descriptive-name>-beta-plan.md`
   - Create `docs/plans/` if it does not exist
   - Check existing files for today's date to determine the next sequence number (zero-padded to 3 digits, starting at 001)
   - Keep the descriptive name concise (3-5 words) and kebab-cased
-  - Examples: `2026-01-15-001-feat-user-authentication-flow-plan.md`, `2026-02-03-002-fix-checkout-race-condition-plan.md`
+  - Append `-beta` before `-plan` to distinguish from stable-generated plans
+  - Examples: `2026-01-15-001-feat-user-authentication-flow-beta-plan.md`, `2026-02-03-002-fix-checkout-race-condition-beta-plan.md`
   - Avoid: missing sequence numbers, vague names like "new-feature", invalid characters (colons, spaces)
 
 #### 3.2 Stakeholder and Impact Awareness
@@ -322,7 +323,7 @@ type: [feat|fix|refactor]
 status: active
 date: YYYY-MM-DD
 origin: docs/brainstorms/YYYY-MM-DD-<topic>-requirements.md  # include when planning from a requirements doc
-deepened: YYYY-MM-DD  # optional, set later by deepen-plan when the plan is substantively strengthened
+deepened: YYYY-MM-DD  # optional, set later by deepen-plan-beta when the plan is substantively strengthened
 ---
 
 # [Plan Title]
@@ -494,7 +495,7 @@ If the plan originated from a requirements document, re-read that document and v
 Use the Write tool to save the complete plan to:
 
 ```text
-docs/plans/YYYY-MM-DD-NNN-<type>-<descriptive-name>-plan.md
+docs/plans/YYYY-MM-DD-NNN-<type>-<descriptive-name>-beta-plan.md
 ```
 
 Confirm:

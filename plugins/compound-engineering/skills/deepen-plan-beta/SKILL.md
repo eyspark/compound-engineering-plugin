@@ -16,9 +16,9 @@ Use this skill when the plan already exists and the question is not "Is this doc
 
 This skill does **not** turn plans into implementation scripts. It identifies weak sections, runs targeted research only for those sections, and strengthens the plan in place.
 
-`document-review` and `deepen-plan` are different:
+`document-review` and `deepen-plan-beta` are different:
 - Use the `document-review` skill when the document needs clarity, simplification, completeness, or scope control
-- Use `deepen-plan` when the document is structurally sound but still needs stronger rationale, sequencing, risk treatment, or system-wide thinking
+- Use `deepen-plan-beta` when the document is structurally sound but still needs stronger rationale, sequencing, risk treatment, or system-wide thinking
 
 ## Interaction Method
 
