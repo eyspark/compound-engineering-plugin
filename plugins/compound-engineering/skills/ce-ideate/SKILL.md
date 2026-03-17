@@ -57,6 +57,7 @@ Treat a prior ideation doc as relevant when:
 - the topic matches the requested focus
 - the path or subsystem overlaps the requested focus
 - the request is open-ended and there is an obvious recent open ideation doc
+- the issue-grounded status matches: do not offer to resume a non-issue ideation when the current argument indicates issue-tracker intent, or vice versa — treat these as distinct topics
 
 If a relevant doc exists, ask whether to:
 1. continue from it
@@ -70,10 +71,17 @@ If continuing:
 
 #### 0.2 Interpret Focus and Volume
 
-Infer two things from the argument:
+Infer three things from the argument:
 
 - **Focus context** - concept, path, constraint, or open-ended
 - **Volume override** - any hint that changes candidate or survivor counts
+- **Issue-tracker intent** - whether the user wants issue/bug data as an input source
+
+Issue-tracker intent triggers when the argument's primary intent is about analyzing issue patterns: `bugs`, `github issues`, `open issues`, `issue patterns`, `what users are reporting`, `bug reports`, `issue themes`.
+
+Do NOT trigger on arguments that merely mention bugs as a focus: `bug in auth`, `fix the login issue`, `the signup bug` — these are focus hints, not requests to analyze the issue tracker.
+
+When combined (e.g., `top 3 bugs in authentication`): detect issue-tracker intent first, volume override second, remainder is the focus hint. The focus narrows which issues matter; the volume override controls survivor count.
 
 Default volume:
 - each ideation sub-agent generates about 7-8 ideas (yielding 30-40 raw ideas across agents, ~20-30 after dedupe)
@@ -91,7 +99,7 @@ Use reasonable interpretation rather than formal parsing.
 
 Before generating ideas, gather codebase context.
 
-Run two agents in parallel in the **foreground** (do not use background dispatch — the results are needed before proceeding):
+Run agents in parallel in the **foreground** (do not use background dispatch — the results are needed before proceeding):
 
 1. **Quick context scan** — dispatch a general-purpose sub-agent with this prompt:
 
@@ -107,12 +115,17 @@ Run two agents in parallel in the **foreground** (do not use background dispatch
 
 2. **Learnings search** — dispatch `compound-engineering:research:learnings-researcher` with a brief summary of the ideation focus.
 
-Consolidate both results into a short grounding summary covering:
-- project shape
-- notable patterns
-- obvious pain points
-- likely leverage points
-- relevant past learnings
+3. **Issue intelligence** (conditional) — if issue-tracker intent was detected in Phase 0.2, dispatch `compound-engineering:research:issue-intelligence-analyst` with the focus hint. If a focus hint is present, pass it so the agent can weight its clustering toward that area. Run this in parallel with agents 1 and 2.
+
+   If the agent returns an error (gh not installed, no remote, auth failure), log a warning to the user ("Issue analysis unavailable: {reason}. Proceeding with standard ideation.") and continue with the existing two-agent grounding.
+
+   If the agent reports fewer than 5 total issues, note "Insufficient issue signal for theme analysis" and proceed with default ideation frames in Phase 2.
+
+Consolidate all results into a short grounding summary. When issue intelligence is present, keep it as a distinct section so ideation sub-agents can distinguish between code-observed and user-reported signals:
+
+- **Codebase context** — project shape, notable patterns, obvious pain points, likely leverage points
+- **Past learnings** — relevant institutional knowledge from docs/solutions/
+- **Issue intelligence** (when present) — theme summaries from the issue intelligence agent, preserving theme titles, descriptions, issue counts, and trend directions
 
 Do **not** do external research in v1.
 
@@ -134,7 +147,16 @@ Follow this mechanism exactly:
    - focus hint
    - per-agent volume target (~7-8 ideas by default)
    - instruction to generate raw candidates only, not critique
-8. When using sub-agents, assign each one a different ideation frame as a **starting bias, not a constraint**. Prompt each agent to begin from its assigned perspective but follow any promising thread wherever it leads — cross-cutting ideas that span multiple frames are valuable, not out of scope. Good starting frames:
+8. When using sub-agents, assign each one a different ideation frame as a **starting bias, not a constraint**. Prompt each agent to begin from its assigned perspective but follow any promising thread wherever it leads — cross-cutting ideas that span multiple frames are valuable, not out of scope.
+
+   **Frame selection depends on whether issue intelligence is active:**
+
+   **When issue-tracker intent is active and themes were returned:**
+   - Each theme with `confidence: high` or `confidence: medium` becomes an ideation frame. The frame prompt uses the theme title and description as the starting bias.
+   - If fewer than 4 cluster-derived frames, pad with default frames in this order: "leverage and compounding effects", "assumption-breaking or reframing", "inversion, removal, or automation of a painful step". These complement issue-grounded themes by pushing beyond the reported problems.
+   - Cap at 6 total frames. If more than 6 themes qualify, use the top 6 by issue count; note remaining themes in the grounding summary as "minor themes" so sub-agents are still aware of them.
+
+   **When issue-tracker intent is NOT active (default):**
    - user or operator pain and friction
    - unmet need or missing capability
    - inversion, removal, or automation of a painful step
@@ -274,7 +296,10 @@ focus: <optional focus hint>
 **Status:** [Unexplored / Explored]
 
 ## Rejection Summary
-- <Idea>: <Reason rejected>
+
+| # | Idea | Reason Rejected |
+|---|------|-----------------|
+| 1 | <Idea> | <Reason rejected> |
 
 ## Session Log
 - YYYY-MM-DD: Initial ideation — <candidate count> generated, <survivor count> survived
